@@ -32,3 +32,9 @@ library(dichromat)
 D %>% cor %>% heatmap()
 D %>% cor %>% heatmap(col = colorRampPalette(c("red", "orange", "gold"))(20))
 D %>% cor %>% heatmap(col = colorRampPalette(c("blue", "skyblue", "white"))(20))
+
+
+library(skimr)
+skim(D)
+library(psych)
+describe(D)
