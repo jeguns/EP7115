@@ -6,7 +6,16 @@ D = data.frame(x,y,z)
 cor.test(x,y)
 
 library(ppcor)
+# H0: correl. parcial = 0
+# H1: correl. parcial != 0
+# alpha = 0.10
 pcor.test(x,y,z)
+
+# Correlación parcial = corr(x,y|z) ~ corr(x,y)/(corr(x,z),corr(y,z))
+
+# Edad ~ Estatura ←
+# Edad ~ Puntaje en la prueba de conocimientos ←
+# Estatura ~ Puntaje
 
 plot(D$x,D$y,pch=18,xlab="Estatura (cm)",ylab="Puntaje")
 
