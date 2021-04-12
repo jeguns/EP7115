@@ -53,3 +53,5 @@ library(skimr)
 skim(D)
 library(psych)
 describe(D)
+
+summary(D)
