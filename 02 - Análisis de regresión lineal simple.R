@@ -96,11 +96,14 @@ datos %>%
 modelo %>% predict(data.frame(Ozono=0.13),
                    interval = "confidence",
                    level = 0.99)
+
 modelo %>% predict(data.frame(Ozono=c(0.05,0.15,0.25)),
                    interval = "confidence",
                    level = 0.95)
 
-
+modelo %>% predict(data.frame(Ozono=c(0.05,0.15,0.25)),
+                   interval = "confidence",
+                   level = 0.99)
 
 # Predicción --------------------------------------------------------------
 
@@ -119,6 +122,8 @@ modelo %>% residuals
 modelo %>% residuals %>% mean
 modelo %>% residuals %>% plot(type="b",pch=18)
 abline(h=0, col="red")
+par(mfrow=c(2,2))
+plot(modelo)
 
 # Lectura de datos --------------------------------------------------------
 
