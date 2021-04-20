@@ -76,9 +76,23 @@ abline(h=aic,col="red",lwd=2)
 
 # Estimación --------------------------------------------------------------
 
+modelo %>% fitted
 modelo %>% predict
-modelo %>% predict(interval = "confidence",
+modelo %>% predict(interval = "confidence", # IC para la media estimada
                    level = 0.99)
+modelo %>% predict(interval = "confidence", # IC para la media estimada
+                   level = 0.99) %>% 
+  data.frame() %>% 
+  mutate(dif=upr-lwr)
+
+library(ggplot2)
+datos %>% 
+  ggplot(aes(Ozono, Rendimiento)) +
+  geom_point(size=5) +
+  geom_smooth(method = "lm", se = T, fullrange = T)+
+  scale_x_continuous(limits=c(0,0.3))+
+  theme_minimal()
+
 modelo %>% predict(data.frame(Ozono=0.13),
                    interval = "confidence",
                    level = 0.99)
