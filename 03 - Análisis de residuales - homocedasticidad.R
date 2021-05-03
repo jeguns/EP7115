@@ -59,8 +59,7 @@ modelo1 %>%
 
 modelo1 %>% ncvTest
 modelo1 %>% ols_test_breusch_pagan
-modelo1 %>% ols_test_score
-modelo1 %>% ols_test_f
+
 
 # Homocedasticidad 2 ------------------------------------------------------
 
@@ -90,8 +89,6 @@ modelo2 %>%
 
 modelo2 %>% ncvTest
 modelo2 %>% ols_test_breusch_pagan
-modelo2 %>% ols_test_score
-modelo2 %>% ols_test_f
 
 # Homocedasticidad 3 ------------------------------------------------------
 
@@ -121,8 +118,6 @@ modelo3 %>%
 
 modelo3 %>% ncvTest
 modelo3 %>% ols_test_breusch_pagan
-modelo3 %>% ols_test_score
-modelo3 %>% ols_test_f
 
 
 
