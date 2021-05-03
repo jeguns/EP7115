@@ -20,7 +20,7 @@ datos_div %>% testing  -> datos_test
 
 datos_train %>% nrow
 datos_test %>% nrow
-
+datos %>% nrow
 
 # Modelamiento - Forma 1 --------------------------------------------------
 
