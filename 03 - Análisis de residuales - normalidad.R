@@ -4,79 +4,92 @@
 
 library(dplyr)
 library(nortest)
+library(normtest)
 library(moments)
 library(readxl)
 library(ggplot2)
 
 # Introducción: Análisis de normalidad  -----------------------------------
 
-y = pvsw = pvad = pvks = asi = cur = NULL
+y = pvsw = pvad = pvks = asi = cur = pvjb =  NULL
 for(i in 1:1000){
   rnorm(1000) -> y[[i]]
-  skewness(y[[i]]) -> asi[[i]]
-  kurtosis(y[[i]]) -> cur[[i]]
-  shapiro.test(y[[i]])$p.value -> pvsw[[i]]
-  ad.test(y[[i]])$p.value -> pvad[[i]]
-  ks.test(y[[i]],"pnorm")$p.value -> pvks[[i]]
+  skewness(y[[i]]) -> asi[i]
+  kurtosis(y[[i]]) -> cur[i]
+  shapiro.test(y[[i]])$p.value -> pvsw[i]
+  ad.test(y[[i]])$p.value -> pvad[i]
+  jb.norm.test(y[[i]])$p.value -> pvjb[i]
+  ks.test(y[[i]],"pnorm")$p.value -> pvks[i]
 }
 
-data.frame(A = asi %>% unlist,
-           K = cur %>% unlist) -> estad
+data.frame(A = asi,
+           K = cur) -> estad
 colMeans(estad)
 plot(estad$A, type="l")
 plot(estad$K, type="l")
-data.frame(sw = pvsw %>% unlist,
-           ad = pvad %>% unlist,
-           ks = pvks %>% unlist) -> pv
+
+# H0: Los valores siguen una distribución normal
+# H1: Los valores no siguen una distriución normal
+
+# H0: e_i ~ N(0,sigma^2)
+# H1: e_i no~ N(0,sigma^2)
+
+# e_1 ~ N(0,1)
+# e_2 ~ N(0,3)
+# e_3 ~ N(0,0.2)
+
+data.frame(sw = pvsw,
+           ad = pvad,
+           ks = pvks,
+           jb = pvjb) -> pv
 pv > 0.05 -> pv1
 colMeans(pv1)
 
-y[[45]] %>% hist
-y[[45]] %>% density %>% plot
-y[[45]] %>% qqnorm; y[[45]] %>% qqline
+y[[29]] %>% hist
+y[[29]] %>% density %>% plot
+y[[29]] %>% qqnorm; y[[29]] %>% qqline
 
 yt = pvswt = pvadt = pvkst = asit = curt = NULL
 
 for(i in 1:1000){
-  rt(1000,10) -> yt[[i]]
-  skewness(yt[[i]]) -> asit[[i]]
-  kurtosis(yt[[i]]) -> curt[[i]]
-  shapiro.test(yt[[i]])$p.value -> pvswt[[i]]
-  ad.test(yt[[i]])$p.value -> pvadt[[i]]
-  ks.test(yt[[i]],"pnorm")$p.value -> pvkst[[i]]
+  rt(500,10) -> yt[[i]]
+  skewness(yt[[i]]) -> asit[i]
+  kurtosis(yt[[i]]) -> curt[i]
+  shapiro.test(yt[[i]])$p.value -> pvswt[i]
+  ad.test(yt[[i]])$p.value -> pvadt[i]
+  ks.test(yt[[i]],"pnorm")$p.value -> pvkst[i]
 }
 
-data.frame(A = asit %>% unlist,
-           K = curt %>% unlist) -> estadt
+data.frame(A = asit,
+           K = curt) -> estadt
 colMeans(estadt)
 plot(estadt$A, type="l")
 plot(estadt$K, type="l")
-data.frame(sw = pvswt %>% unlist,
-           ad = pvadt %>% unlist,
-           ks = pvkst %>% unlist) -> pvt
+data.frame(sw = pvswt,
+           ad = pvadt,
+           ks = pvkst) -> pvt
 pvt > 0.05 -> pv1t
 colMeans(pv1t)
 
 yg = pvswg = pvadg = pvksg = asig = curg = NULL
 
 for(i in 1:1000){
-  rgamma(1000,100,40) -> yg[[i]]
-  skewness(yg[[i]]) -> asig[[i]]
-  kurtosis(yg[[i]]) -> curg[[i]]
-  shapiro.test(yg[[i]])$p.value -> pvswg[[i]]
-  ad.test(yg[[i]])$p.value -> pvadg[[i]]
-  ks.test(yg[[i]],"pnorm")$p.value -> pvksg[[i]]
+  rgamma(500,100,400) -> yg[[i]]
+  skewness(yg[[i]]) -> asig[i]
+  kurtosis(yg[[i]]) -> curg[i]
+  shapiro.test(yg[[i]])$p.value -> pvswg[i]
+  ad.test(yg[[i]])$p.value -> pvadg[i]
+  ks.test(yg[[i]],"pnorm")$p.value -> pvksg[i]
 }
 
-
-data.frame(A = asig %>% unlist,
-           K = curg %>% unlist) -> estadg
+data.frame(A = asig,
+           K = curg) -> estadg
 colMeans(estadg)
 plot(estadg$A, type="l")
 plot(estadg$K, type="l")
-data.frame(sw = pvswg %>% unlist,
-           ad = pvadg %>% unlist,
-           ks = pvksg %>% unlist) -> pvg
+data.frame(sw = pvswg,
+           ad = pvadg,
+           ks = pvksg) -> pvg
 pvg > 0.05 -> pv1g
 colMeans(pv1g)
 
