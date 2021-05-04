@@ -8,6 +8,7 @@ library(normtest)
 library(moments)
 library(readxl)
 library(ggplot2)
+library(broom)
 
 # Introducción: Análisis de normalidad  -----------------------------------
 
@@ -74,7 +75,7 @@ colMeans(pv1t)
 yg = pvswg = pvadg = pvksg = asig = curg = NULL
 
 for(i in 1:1000){
-  rgamma(500,100,400) -> yg[[i]]
+  rgamma(5000,1,4) -> yg[[i]]
   skewness(yg[[i]]) -> asig[i]
   kurtosis(yg[[i]]) -> curg[i]
   shapiro.test(yg[[i]])$p.value -> pvswg[i]
@@ -93,6 +94,27 @@ data.frame(sw = pvswg,
 pvg > 0.05 -> pv1g
 colMeans(pv1g)
 
+hist(yg[[6]])
+
+mediag = NULL
+for(i in 1:1000){
+  mean(yg[[i]]) -> mediag[i]
+}
+hist(mediag)
+
+# H0: mu_e = 0
+# H1: mu_e dist 0
+
+# H0: e ~ N()
+# H1: e no ~ N()
+
+rgamma(1000,2,3) -> asim
+hist(asim)
+hist(sqrt(asim))
+
+plot(table(rpois(1000,2)))
+plot(table(rpois(1000,320)))
+
 # Datos y modelos ---------------------------------------------------------
 
 datos1  = read_excel("03_Residuales.xlsx")
@@ -109,15 +131,27 @@ modelo3 %>% summary
 
 # Residuales --------------------------------------------------------------
 
-modelo1 %>% residuals %>% data.frame -> residuales1
+modelo1 %>% residuals  -> residuales1
+residuals(modelo1) -> residuales1
 
-modelo2 %>% residuals %>% data.frame -> residuales2
+modelo2 %>% residuals  -> residuales2
 
-modelo3 %>% residuals %>% data.frame -> residuales3
+modelo3 %>% residuals  -> residuales3
 
 # Normalidad 1 ------------------------------------------------------------
 
 modelo1 %>% plot(which = 2)
+
+modelo1 %>% 
+  augment %>% 
+  ggplot(aes(sample=.resid))+
+  stat_qq() +
+  stat_qq_line(distribution = "qnorm")+
+  labs(x = "cuantil teórico",
+       y = "residuales")+
+  theme_minimal()
+
+hist(modelo1$residuals)
 
 modelo1 %>% 
   augment %>% 
@@ -138,15 +172,6 @@ modelo1 %>%
 modelo1 %>% residuals() %>% skewness()
 modelo1 %>% residuals() %>% kurtosis()
 
-modelo1 %>% 
-  augment %>% 
-  ggplot(aes(sample=.resid))+
-  stat_qq() +
-  stat_qq_line(distribution = "qnorm")+
-  labs(x = "cuantil teórico",
-       y = "residuales")+
-  theme_minimal()
-
 modelo1 %>% residuals %>% shapiro.test()
 modelo1 %>% residuals %>% ad.test()
 modelo1 %>% residuals %>% ks.test("pnorm")
@@ -156,9 +181,20 @@ modelo1 %>% residuals %>% ks.test("pnorm")
 modelo2 %>% plot(which = 2)
 
 modelo2 %>% 
+  augment() %>% 
+  ggplot(aes(sample=.resid))+
+  stat_qq() +
+  stat_qq_line(distribution = "qnorm")+
+  labs(x = "cuantil teórico",
+       y = "residuales")+
+  theme_minimal()
+
+hist(modelo2$residuals)
+
+modelo2 %>% 
   augment %>% 
   ggplot(aes(x=.resid))+
-  geom_histogram(bins = 5)+
+  geom_histogram(bins = 7)+
   labs(x = "residuales",
        y = "frecuencia") +
   theme_minimal()
@@ -174,15 +210,6 @@ modelo2 %>%
 modelo2 %>% residuals() %>% skewness()
 modelo2 %>% residuals() %>% kurtosis()
 
-modelo2 %>% 
-  augment() %>% 
-  ggplot(aes(sample=.resid))+
-  stat_qq() +
-  stat_qq_line(distribution = "qnorm")+
-  labs(x = "cuantil teórico",
-       y = "residuales")+
-  theme_minimal()
-
 modelo2 %>% residuals() %>% shapiro.test()
 modelo2 %>% residuals() %>% ad.test()
 modelo2 %>% residuals() %>% ks.test("pnorm")
@@ -192,26 +219,8 @@ modelo2 %>% residuals() %>% ks.test("pnorm")
 modelo3 %>% plot(which = 2)
 
 modelo3 %>% 
-  augment() %>% 
-  ggplot(aes(x=.resid))+
-  geom_histogram(bins = 5)+
-  labs(x = "residuales",
-       y = "frecuencia") +
-  theme_minimal()
-
-modelo3 %>% 
-  augment() %>% 
-  ggplot(aes(x=.resid))+
-  geom_density()+
-  labs(x = "residuales",
-       y = "densidad")+
-  theme_minimal()
-
-modelo3 %>% residuals() %>% skewness()
-modelo3 %>% residuals() %>% kurtosis()
-
-modelo3 %>% 
   augment %>% 
+  slice_head(n=97) %>% 
   ggplot(aes(sample=.resid))+
   stat_qq() +
   stat_qq_line(distribution = "qnorm")+
@@ -219,7 +228,28 @@ modelo3 %>%
        y = "residuales")+
   theme_minimal()
 
-modelo3 %>% residuals() %>% shapiro.test()
-modelo3 %>% residuals() %>% ad.test()
-modelo3 %>% residuals() %>% ks.test("pnorm")
+modelo3 %>% 
+  augment() %>% 
+  #slice_head(n=97) %>% 
+  ggplot(aes(x=.resid))+
+  geom_histogram(binwidth = 7)+
+  labs(x = "residuales",
+       y = "frecuencia") +
+  theme_minimal()
+
+modelo3 %>% 
+  augment() %>% 
+  slice_head(n=97) %>% 
+  ggplot(aes(x=.resid))+
+  geom_density()+
+  labs(x = "residuales",
+       y = "densidad")+
+  theme_minimal()
+
+(modelo3 %>% residuals())[-c(98,99)] %>% skewness()
+(modelo3 %>% residuals())[-c(98,99)] %>% kurtosis()
+
+(modelo3 %>% residuals())[-c(98,99)] %>% shapiro.test()
+(modelo3 %>% residuals())[-c(98,99)] %>% ad.test()
+(modelo3 %>% residuals())[-c(98,99)] %>% ks.test("pnorm")
 
