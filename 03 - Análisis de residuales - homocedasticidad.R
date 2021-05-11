@@ -5,9 +5,9 @@ library(dplyr)
 library(readxl)
 library(ggplot2)
 library(broom)
-library(car)
-library(lmtest)
-library(olsrr)
+library(car) # función spreadLevelPlot, ncvTest
+library(lmtest) # función bptest
+library(olsrr) # función ols_test_breusch_pagan
 
 # Datos y modelos ---------------------------------------------------------
 
@@ -80,7 +80,7 @@ modelo1 %>%
        y = "Residual", 
        title = "Evaluación de homocedasticidad",
        subtitle = "Modelo 1")+
-  theme_minimal()
+  theme_minimal() # tiene más utilidad en una R.L.Múltiple
 
 modelo1 %>% plot(which=3)
 
@@ -95,6 +95,7 @@ modelo1 %>%
   ggplot(aes(x=.fitted,y=sqrt(abs(.std.resid))))+
   geom_point(size = 3) + 
   geom_hline(yintercept=0, linetype = "dotted", col = "grey")+
+  geom_hline(yintercept=sqrt(2), linetype = "dotted", col = "blue")+
   geom_path(data = smoothed, aes(x = x, y = y), col = "red")+
   labs(x = "valor ajustado",
        y = "raíz cuadrada del valor absoluto del residual estudentizado", 
@@ -104,7 +105,8 @@ modelo1 %>%
 
 modelo1 %>% ncvTest
 modelo1 %>% ols_test_breusch_pagan
-modelo1 %>% bptest
+modelo1 %>% bptest # Por defecto trabaja con estud.
+# estudentizados son más robustos a la falta de normalidad
 modelo1 %>% bptest(studentize = F)
 
 # Homocedasticidad 2 ------------------------------------------------------

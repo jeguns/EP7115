@@ -6,8 +6,8 @@ library(readxl)
 library(ggplot2)
 library(broom)
 library(ggfortify)
-library(lmtest)
-library(car)
+library(lmtest) # función dwtest
+library(car) # función durbinWatsonTest
 
 # Datos y modelos ---------------------------------------------------------
 
@@ -37,10 +37,10 @@ modelo1 %>%
        subtitle = "Modelo 1")+
   theme_minimal()
 
-modelo1 %>% 
+x11();modelo1 %>% 
   augment %>% 
-  select(.resid) %>% 
-  TSA::acf(lag = 15, plot=F) %>% 
+  dplyr::select(.resid) %>% 
+  TSA::acf(lag = 27, plot=F) %>% 
   autoplot +
   labs(x = "Desfase",
        y = "Autocorrelación") + 
@@ -48,7 +48,9 @@ modelo1 %>%
 
 modelo1 %>% dwtest(alternative = "two.sided")
 
-modelo1 %>% durbinWatsonTest(alternative = "two.sided",max.lag=10)
+modelo1 %>% durbinWatsonTest(alternative = "two.sided",
+                             max.lag=10,
+                             reps=1e5)
 
 # Independencia 2 ---------------------------------------------------------
 
@@ -100,7 +102,8 @@ modelo3 %>%
        y = "Autocorrelación") + 
   theme_minimal()
 
-modelo3 %>% dwtest(alternative = "two.sided")
+modelo3 %>% dwtest(alternative = "two.sided") #H0: rho1 = 0 vs H1: rho1 no es = 0
 
-modelo3 %>% durbinWatsonTest(alternative = "two.sided",max.lag=10)
+modelo3 %>% durbinWatsonTest(alternative = "two.sided",max.lag=20,rep=1e5)
+
 

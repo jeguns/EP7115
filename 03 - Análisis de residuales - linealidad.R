@@ -78,7 +78,6 @@ modelo2 %>%
 modelo2 %>% residualPlots
 modelo2 %>% crPlots
 
-
 # Linealidad 3 ------------------------------------------------------------
 
 modelo3%>% 
@@ -100,10 +99,16 @@ modelo3 %>%
 modelo3 %>% residualPlots
 modelo3 %>% crPlots
 
-
 library(gvlma)
 gvmodel <- gvlma(modelo1)
 summary(gvmodel)
+gvmodel
+
+# H0: Relación Y ~ X's es lineal
+# H0: Asim = 0 (Simétrico)
+# H0: La distribución de los errores es mesocúrtica
+# H0: La función de enlace es correcta (según lo especificado en el modelo)
+# H0: Los errores tienen varianza constante
 
 modelo1 %>% gvlma 
 modelo2 %>% gvlma
