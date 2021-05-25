@@ -5,15 +5,15 @@
 
 library(readxl)
 library(dplyr)
-library(psych)
-library(GGally)
+library(psych) # pairs.panels
+library(GGally) # ggpairs
 library(scatterplot3d)
 library(rgl)
-library(car)
+library(car) # avPlots # ellipse # confidenceEllipse
 library(broom)
 library(ellipse)
 library(lmtest)
-library(gmodels)
+library(gmodels) # glh.test
 library(ggplot2)
 library(moments)
 library(nortest)
@@ -38,13 +38,16 @@ datos %>%
 
 datos %>% 
   ggpairs + 
-  theme_minimal()
+  theme_bw()
 
 datos %>% 
   ggpairs(
   upper = list(continuous = "density", combo = "box_no_facet"),
   lower = list(continuous = "points", combo = "dot_no_facet")) +
   theme_bw()
+
+(scatterplot3d(datos$Educacion,datos$X4, datos$Sueldo, pch=16, highlight.3d=TRUE,
+               type="h", main="3D Scatterplot") -> graf3d)
 
 (scatterplot3d(datos$Educacion,datos$Edad, datos$Sueldo, pch=16, highlight.3d=TRUE,
               type="h", main="3D Scatterplot") -> graf3d)
@@ -58,6 +61,7 @@ plot3d(datos$Educacion,datos$X4, datos$Sueldo, col="darkblue", size=8)
 
 lm(Sueldo ~ ., data = datos) %>% avPlots
 
+# Gráfico de regresión parcial para la EDAD
 modelo_sueldo = lm(Sueldo ~ Educacion + Sexo + X4, data = datos)
 modelo_edad   = lm(Edad ~ Educacion + Sexo + X4, data = datos)
 data.frame(res_edad = residuals(modelo_edad),
@@ -83,30 +87,49 @@ modelo %>% summary
 # Estimación intervalar ---------------------------------------------------
 
 modelo %>% confint(level = 0.95)
+vcov(modelo) 
 X = model.matrix(Sueldo~Educacion+Edad+Sexo+X4,data=datos)
 C = solve(t(X)%*%X)
 (LI = betas[1,2] - qt(0.975,19)*sigma*sqrt(C[1,1]))
 (LS = betas[1,2] + qt(0.975,19)*sigma*sqrt(C[1,1]))
 
-modelo %>% ellipse(which = c(1,4)) %>% plot(type = "l",
-                                            col  = "forestgreen")
+(LI = betas[1,2] - qt(0.975,19)*sqrt(vcov(modelo)[1,1]))
+(LS = betas[1,2] + qt(0.975,19)*sqrt(vcov(modelo)[1,1]))
+
+
+X = model.matrix(Sueldo~Educacion+Edad+Sexo+X4,data=datos)
+p = 5
+n = 24
+CME = 1.29 # summary(aov(modelo))
+betaest = betas$estimate
+valorF  = qf(0.95,p,n-p)
+
+betap   = c(-0.5,0.2,0.8,0.15,0.05) # ¿estará en la región de confianza?
+(t(betaest - betap)%*%t(X)%*%X%*%(betaest - betap))/(p*CME) < valorF
+
+modelo %>% 
+  ellipse(which = c(1,4)) %>% 
+  plot(type = "l",
+       col  = "forestgreen")
 points(modelo$coefficients[1], modelo$coefficients[4], col  = "forestgreen", pch = 18)
-modelo %>% confidenceEllipse(fill = T,
-                             lwd        = 0,
-                             which.coef = c(1,4),
+
+modelo %>% confidenceEllipse(fill       = T,
+                             lwd        = 1,
+                             which.coef = c(2,4),
                              Scheffe    = F,
                              col        = "forestgreen")
 
 # Prueba de hipótesis -----------------------------------------------------
 
 summary(modelo)
+summary(aov(modelo))
 
 modelo2 = lm(Sueldo~Educacion+Edad+Sexo, data = datos)
 anova(modelo2,modelo)
 anova(modelo,modelo2)
 
 lrtest(modelo,4)
-lrtest(modelo,"X3")
+lrtest(modelo,"X4")
 lrtest(modelo2,modelo)
 lrtest(modelo,modelo2)
 
