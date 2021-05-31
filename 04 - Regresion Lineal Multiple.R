@@ -98,11 +98,11 @@ C = solve(t(X)%*%X)
 
 
 X = model.matrix(Sueldo~Educacion+Edad+Sexo+X4,data=datos)
-p = 5
+k = 5
 n = 24
 CME = 1.29 # summary(aov(modelo))
 betaest = betas$estimate
-valorF  = qf(0.95,p,n-p)
+valorF  = qf(0.95,k,n-k)
 
 betap   = c(-0.5,0.2,0.8,0.15,0.05) # ¿estará en la región de confianza?
 (t(betaest - betap)%*%t(X)%*%X%*%(betaest - betap))/(p*CME) < valorF
