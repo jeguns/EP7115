@@ -145,8 +145,10 @@ ret %>% summary
 
 # Estimación de la media --------------------------------------------------
 
+modelo$fitted.values
+
 (modelo %>% 
-    augment %>% 
+    broom::augment() %>% 
     dplyr::select(.fitted) -> yest)
 
 modelo %>% 
@@ -160,22 +162,22 @@ modelo %>%
   theme_minimal()
 
 modelo %>% 
-  predict(data.frame(Educacion = 10,
-                     Sexo = "M",
-                     Edad = 42,
-                     X3   = -5))
+  predict(data.frame(Educacion = c(10,12),
+                     Sexo = c("M","F"),
+                     Edad = c(42,53),
+                     X4   = c(-5,1)))
 
 modelo %>% 
-  predict(data.frame(Educacion = 10,
-                     Sexo = "M",
-                     Edad = 42,
-                     X3   = -5),
+  predict(data.frame(Educacion = c(10,12),
+                     Sexo = c("M","F"),
+                     Edad = c(42,53),
+                     X4   = c(-5,1)),
           interval = "confidence",
           level    = 0.95)
 
-
+(X = model.matrix(Sueldo~Educacion+Edad+Sexo+X4,data=datos))
 (x = c(1,10,42,1,-5))
-(H = X%*%solve(t(X)%*%X)%*%t(X))
+(H = X%*%solve(t(X)%*%X)%*%t(X));dim(H)
 (h = H %>% diag %>% max)
 t(x)%*%solve(t(X)%*%X)%*%x
 t(x)%*%solve(t(X)%*%X)%*%x > h
@@ -183,6 +185,17 @@ t(x)%*%solve(t(X)%*%X)%*%x > h
 (x = c(1,60,-15,1,35))
 t(x)%*%solve(t(X)%*%X)%*%x
 t(x)%*%solve(t(X)%*%X)%*%x > h
+
+
+# Predicción individual ---------------------------------------------------
+
+modelo %>% 
+  predict(data.frame(Educacion = c(10,12),
+                     Sexo = c("M","F"),
+                     Edad = c(42,53),
+                     X4   = c(-5,1)),
+          interval = "prediction",
+          level    = 0.95)
 
 # Supuestos ---------------------------------------------------------------
 
