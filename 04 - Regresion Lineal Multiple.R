@@ -272,3 +272,7 @@ datos2 = datos %>% mutate(Sex = ifelse(Sexo=="M",1,0))
 mosexo = lm(Sex ~ Educacion+Edad+X4, data=datos2)
 summary(mosexo)$r.squared
 1/(1-summary(mosexo)$r.squared)
+
+modx4 = lm(X4 ~ Sexo+Edad+Educacion, data=datos)
+summary(modx4)$r.squared
+1/(1-summary(modx4)$r.squared)
