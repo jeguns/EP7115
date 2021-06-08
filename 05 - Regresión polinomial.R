@@ -13,15 +13,16 @@ library(olsrr)
 library(gvlma)
 library(MuMIn)
 library(DAAG)
-library(npreg)
+library(npreg) # ss
 
 # Regresión polinómica ----------------------------------------------------
 
 x = c(4,3.1,5.5,6,7.6,8,3.3,5,2,7,4.5)
 y = c(24.74,16.83,40.52,47.56,73.15,80.37,16.55,35.82,8.35,62.56,29.86)
+plot(x,y,pch=18)
 lm(y~x+I(x^2)+I(x^3)+I(x^4)+I(x^5)+I(x^6)+I(x^7)+I(x^8)+I(x^9)+I(x^10)-1) %>% summary
 lm(y~x+I(x^2)+I(x^3)+I(x^4)+I(x^5)+I(x^6)+I(x^7)+I(x^8)+I(x^9)+I(x^10)-1) %>% model.matrix -> X
-solve(t(x)%*%X)
+solve(t(X)%*%X)
 lm(y~x+I(x^2)+I(x^3)+I(x^4)+I(x^5)+I(x^6)+I(x^7)+I(x^8)+I(x^9)+I(x^10)-1) %>% vif
 
 
@@ -115,6 +116,10 @@ summary(modelo3)$adj.r.squared
 summary(modelo4)$adj.r.squared
 summary(modelo5)$adj.r.squared
 
+# Recordemos que los modelos polinomiales tienden a 
+# sobreajustar, entonces es conveniente estimar los modelos
+# mediante validación cruzada
+
 datos4 %>% 
   mutate(xx = x2**2)->datos5
 
@@ -168,13 +173,13 @@ mod.sp6
 mod.sp7 <- ss(x,y, m = 1)
 mod.sp7
 
-mod.sp8 <- ss(x,y)
+mod.sp8 <- ss(x,y) # m =2
 mod.sp8
 
 mod.sp9 <- ss(x,y, m = 3)
 mod.sp9
 
-par(mfrow=c(3,3))
+x11();par(mfrow=c(3,3))
 plot(mod.sp1, ylim = range(y))
 points(x,y,pch=18)
 plot(mod.sp2, ylim = range(y))
@@ -203,6 +208,10 @@ summary(mod.sp6)$adj.r.squared
 summary(mod.sp7)$adj.r.squared
 summary(mod.sp8)$adj.r.squared
 summary(mod.sp9)$adj.r.squared
+
+data.frame(y,predict.ss(mod.sp6,x=x))
+# ↑ de aquí calcular residuales y verificar si
+# son normales
 
 predict.ss(mod.sp6,x=c(15.2,23.2,8))
 
