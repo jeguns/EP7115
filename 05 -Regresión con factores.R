@@ -5,7 +5,7 @@
 
 library(readxl)
 library(dplyr)
-library(forcats)
+library(forcats) # fct_collapse
 library(gmodels)
 library(lmtest)
 library(car)
@@ -23,7 +23,18 @@ modelo1 %>% model.matrix()
 modelo1 %>% summary
 modelo1 %>% vif
 
-# Un factor dicotómico ----------------------------------------------------
+lm(Nota ~ PC1, data = datos1) -> modelo1b
+
+summary(modelo1)$adj.r.squared
+summary(modelo1b)$adj.r.squared
+
+AIC(modelo1)
+AIC(modelo1b)
+
+
+1.4313 + 0.9354*15
+
+  # Un factor politómico ----------------------------------------------------
 
 read_excel("05_Reg_02.xlsx") -> datos2
 
@@ -33,18 +44,20 @@ datos2 %>%
 lm(Nota ~ PC1 + Turno, data = datos2) -> modelo2
 
 modelo2 %>% model.matrix
+modelo2 %>% summary
+
+cons = rbind(c(0,0,1,-1))
+ret  = glh.test(modelo2, cons, d = 0)
+ret
+ret %>% summary
+
+modelo2 %>% summary
 
 lm(Nota ~ PC1, data = datos2) -> modelo2_
 anova(modelo2_,modelo2)
 modelo2 %>% lrtest("Turno")
 
-modelo2 %>% summary
-cons = rbind(c(0,0,1,-1))
-ret  = glh.test(modelo2, cons)
-ret
-ret %>% summary
-
-modelo2 %>% vif
+car::vif(modelo2)
 
 datos2 %>% 
   mutate(Turno = fct_collapse(Turno, 
@@ -69,3 +82,4 @@ lm(Nota ~ PC1 + Turno, data = datos3) -> modelo3a
 modelo3a %>% summary
 modelo3a %>% vif
 
+anova(modelo3a,modelo3)
