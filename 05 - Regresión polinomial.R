@@ -127,7 +127,7 @@ DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ x1+x2), m=3) -> vc.mo
 DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ x1+x2+I(x2^2)), m=3)-> vc.modelo1
 DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ x1+I(x2^2)), m=3)-> vc.modelo2a
 DAAG::cv.lm(data=data.frame(datos5), form.lm = formula(y ~ x1+xx), m=3)-> vc.modelo2b
-DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ I(x2^2)), m=3)-> vc.modelo3a
+DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ I(x2^2)), m=3)-> vc.modelo3a # no funciona
 DAAG::cv.lm(data=data.frame(datos5), form.lm = formula(y ~ xx), m=3)-> vc.modelo3b
 DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ x2), m=3)-> vc.modelo4
 DAAG::cv.lm(data=data.frame(datos4), form.lm = formula(y ~ x1), m=3)-> vc.modelo5
