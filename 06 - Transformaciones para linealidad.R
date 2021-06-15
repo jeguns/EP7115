@@ -48,12 +48,15 @@ modelo3 %>% AIC()
 
 modelo1 %>% summary # R²AJ = 0.948
 # y = 1604.71 + 11.64x1 - 107.91x2 + 6.21x²
+# yobs vs ypred → R²pred
 
 modelo2 %>% summary # R²AJ = 0.942
 # log(y) = 2.447147 + 0.004x1 + 1.706874log(x2)
+# yobs vs exp(log(ypred)) → R²pred
 
 modelo3 %>% summary # R²AJ = 0.945
 # log(y) = 6.209853 + 0.004x1 + 0.068764x2
+# yobs vs exp(log(ypred)) → R²pred
 
 x11();par(mfrow=c(2,2));modelo1 %>% plot
 x11();par(mfrow=c(2,2));modelo2 %>% plot

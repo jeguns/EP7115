@@ -5,14 +5,13 @@
 library(datasets)
 library(dplyr)
 library(ggplot2)
-library(skimr)
+library(skimr) # función skim
 library(broom)
 library(car) # función spreadLevelPlot, ncvTest
 library(lmtest) # función bptest
 library(olsrr) # función ols_test_breusch_pagan
-library(MASS)
-library(forecast)
-
+library(MASS) # función boxcox
+library(forecast) # función BoxCox
 
 # Datos -------------------------------------------------------------------
 
@@ -31,7 +30,7 @@ modelo_0 %>% plot(which=1)
 
 modelo_0 %>% 
   augment %>% 
-  ggplot(aes(x=wool,y=.resid))+
+  ggplot(aes(x=tension,y=.resid))+
   geom_point(size = 3) + 
   geom_hline(yintercept=0)+
   labs(x = "Wool",
@@ -45,11 +44,10 @@ modelo_0 %>% residuals %>% shapiro.test
 modelo_0 %>% ols_test_breusch_pagan
 modelo_0 %>% bptest()
 
-
 # Transformación Box Cox --------------------------------------------------
 
 modelo_0 %>% boxcox()
-modelo_0 %>% boxcox(lambda = seq(-1,1, by = 0.1))
+modelo_0 %>% boxcox(lambda = seq(-1,0.5, by = 0.1))
 modelo_0 %>% boxcox(plotit = F)
 (data.frame(x=boxcox(modelo_0,plotit = F)$x,
             y=boxcox(modelo_0,plotit = F)$y) %>% 
@@ -62,7 +60,7 @@ modelo_0 %>% boxcox(plotit = F)
 
 BoxCox(datos$breaks, lambda) -> ynueva
 
-(datos$breaks^lambda - 1)/lambda
+(datos$breaks^lambda - 1)/lambda # ynueva = (y^0.1 -1)/0.1
 
 lm(ynueva ~ wool + tension, data = datos) -> modelo_1
 
@@ -70,7 +68,7 @@ modelo_1 %>% plot(which=1)
 
 modelo_1 %>% 
   augment %>% 
-  ggplot(aes(x=wool,y=.resid))+
+  ggplot(aes(x=tension,y=.resid))+
   geom_point(size = 3) + 
   geom_hline(yintercept=0)+
   labs(x = "Wool",
@@ -112,7 +110,12 @@ modelo_2 %>% bptest()
 
 modelo_0 %>% summary
 modelo_1 %>% summary
+# (y^0.1 -1)/0.1 = 2.9997-0.1062wool-0.2031tensionM - 0.3514tensionH
+# y = ... se complica
+
 modelo_2 %>% summary
+# log(y) = 3.576-0.152wool-0.287tensionM-0.489tensionH
+# y = exp(3.576-0.152wool-0.287tensionM-0.489tensionH)
 
 ypred0 = modelo_0 %>% predict
 ypred1 = ((modelo_1 %>% predict)*lambda+1)^(1/lambda)
@@ -129,8 +132,6 @@ modelo_2 %>% AIC
 modelo_0 %>% BIC
 modelo_1 %>% BIC
 modelo_2 %>% BIC
-
-
 
 # Modelo adecuado ---------------------------------------------------------
 
