@@ -10,7 +10,7 @@ modelo %>% model.matrix -> X
 X %*% solve(t(X) %*% X) %*% t(X) -> H
 (r/(s*sqrt(1-diag(H))) -> res_stand)
 modelo %>% rstandard() 
-
+modelo %>% rstandard() %>% shapiro.test() # no es normal
 
 lm(y[-1]~x[-1]) -> modelo_1
 summary(modelo_1)$sigma -> s_1
@@ -21,8 +21,8 @@ summary(modelo_2)$sigma -> s_2
 r[2]/(s_2*sqrt(1-H[2,2]))
 
 length(x) -> n
-1 -> k
-res_stand*sqrt((n-k-2)/(n-k-1-res_stand^2))
+2 -> k # número de coeficientes de regresión (2: beta0 y beta1)
+res_stand*sqrt((n-k-1)/(n-k-res_stand^2))
 
 modelo %>% rstudent
 library(MASS)
