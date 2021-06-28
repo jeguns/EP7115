@@ -28,10 +28,10 @@ modelo1 %>% rstudent
 modelo2 %>% rstudent
 
 data.frame(leverage=diag(H1)>2*k1/n1,
-           influencial=abs(modelo1 %>% rstudent)>3)
+           influencial=abs(modelo1 %>% rstudent)>2)
 
 data.frame(leverage=diag(H2)>2*k2/n2,
-           influencial=abs(modelo2 %>% rstudent)>3)
+           influencial=abs(modelo2 %>% rstudent)>2)
 
 modelo1 %>% influence.measures()
 modelo2 %>% influence.measures()
