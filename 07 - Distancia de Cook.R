@@ -17,6 +17,7 @@ modelo1 %>% model.matrix -> X
 modelo1 %>% hatvalues -> h1
 modelo1 %>% rstandard -> rsta1
 (rsta1[1]**2*h1[1])/(k1*(1-h1[1]))
+(rsta1**2*h1)/(k1*(1-h1))
 
 modelo1 %>% cooks.distance()
 
@@ -25,7 +26,8 @@ modelo1 %>% influence.measures()
 modelo1 %>% plot(which=4)
 modelo1 %>% plot(which=5)
 
-modelo1 %>% cooks.distance %>% pf(2,10-2)
+pf(3.55,6,19)
+modelo1 %>% cooks.distance %>% pf(2,11-2)
 
 x2 = c(1,4,3,2.5,8,5,3,5.8,6,4,14)
 y2 = c(3.1,14,8.8,10,10,15.4,9.6,15,19.1,10,15)
@@ -35,5 +37,5 @@ modelo2 %>% cooks.distance()
 modelo2 %>% influence.measures()
 modelo2 %>% plot(which=4)
 modelo2 %>% plot(which=5)
-modelo2 %>% cooks.distance %>% pf(2,10-2)
+modelo2 %>% cooks.distance %>% pf(2,11-2)
 
