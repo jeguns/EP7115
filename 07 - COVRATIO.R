@@ -19,3 +19,5 @@ n > 3*k
 modelo1 %>% covratio() > 1+3*k/n 
 modelo1 %>% covratio() < 1-3*k/n
 modelo1 %>% covratio() > 1+3*k/n | modelo1 %>% covratio() < 1-3*k/n
+
+modelo1 %>% influence.measures()
