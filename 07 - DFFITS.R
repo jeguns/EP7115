@@ -14,8 +14,10 @@ modelo1 %>% hatvalues -> h
 
 modelo1 %>% rstudent -> rstud
 sqrt(h[1]/(1-h[1]))*rstud[1]
+sqrt(h/(1-h))*rstud
 
 modelo1 %>% dffits
+
 2 -> k
 length(x1) -> n
 modelo1 %>% dffits > 2*sqrt(k/n)
