@@ -95,7 +95,6 @@ predict(modelo_ridge_final, newx = x_nuevo)
 predict(modelo_final_propuesto, data.frame(x4="0"))
 
 
-
 # Ejemplo RIDGE -----------------------------------------------------------
 
 data("meatspec")
