@@ -121,7 +121,7 @@ glmnet(x           = x_train,
        nlambda     = 200,
        standardize = T) -> modelo_ridge
 
-modelo_ridge$beta %>% 
+x11();modelo_ridge$beta %>% 
   as.matrix() %>%
   t() %>% 
   as_tibble() %>%
@@ -216,6 +216,8 @@ cv_error
 
 cv_error %>% plot()
 
+cv_error$lambda.min
+cv_error$lambda.min %>% log
 cv_error$lambda.1se
 cv_error$lambda.1se %>% log
 
@@ -245,9 +247,10 @@ predict(modelo_lasso_final, newx = x_test) -> predicciones_test_lasso
 
 # Ejemplo ELASTIC NET -----------------------------------------------------
 
+
 glmnet(x           = x_train,
        y           = y_train,
-       alpha       = 0.85,
+       alpha       = 0.85, # hiperparámetro a mejorar
        nlambda     = 200,
        standardize = TRUE) -> modelo_elastic
 
@@ -272,7 +275,7 @@ modelo_elastic$beta %>%
 
 cv_error <- cv.glmnet(x      = x_train,
                       y      = y_train,
-                      alpha  = 0.5,
+                      alpha  = 0.85,
                       nfolds = 10,
                       type.measure = "mse",
                       standardize  = TRUE)
@@ -285,7 +288,7 @@ cv_error$lambda.1se %>% log
 
 glmnet(x           = x_train,
        y           = y_train,
-       alpha       = 0.5,
+       alpha       = 0.85,
        lambda      = cv_error$lambda.1se,
        standardize = TRUE) -> modelo_elastic_final
 
