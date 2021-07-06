@@ -27,7 +27,7 @@ modelo_completo %>%
 
 modelo_completo %>% vif
 
-modelo_completo %>% logLik%>% as.numeric -> logvero
+modelo_completo %>% logLik %>% as.numeric -> logvero
 modelo_completo %>% coef %>% length -> p
 2*(p+1)-2*logvero
 modelo_completo %>% AIC
@@ -36,7 +36,7 @@ modelo_completo %>% logLik%>% as.numeric -> logvero
 modelo_completo %>% coef %>% length -> p
 modelo_completo %>% fitted.values %>% length -> n
 log(n)*(p+1)-2*logvero
-modelo_completo %>% BIC
+modelo_completo %>% BIC # sbc 
 
 modelo_completo %>% 
   ols_step_all_possible %>% 
@@ -77,7 +77,6 @@ data("meatspec")
 datos <- meatspec
 datos %>% skim
 datos %>% cor %>% ggcorrplot(method = "circle",type="lower") -> correlacion
-c
 ggsave("correlacion.jpg",correlacion,width = 100,height = 100,units = "cm")
 
 datos[,1:100] %>% scale -> x
@@ -154,7 +153,7 @@ modelo_backward %>% predict(newdata = data.frame(x_test)) -> predicciones_test
 step(object    = lm(formula = y ~ 1, data = datos_train),
      direction = "forward",
      scope     = formula(lm(y~.,data=datos)),
-     trace     = T) -> modelo_forward
+     trace     = F) -> modelo_forward
 
 modelo_forward %>% summary
 
@@ -182,7 +181,8 @@ modelo_forward %>% predict(newdata = data.frame(x_test)) -> predicciones_test
 step(object    = lm(formula = y ~ 1, data = datos_train),
      direction = "both",
      scope     = formula(lm(y~.,data=datos)),
-     trace     = T) -> modelo_step
+     trace     = T,
+     k = log(150)) -> modelo_step
 
 modelo_step %>% summary
 
